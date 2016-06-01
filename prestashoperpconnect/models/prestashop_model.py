@@ -159,9 +159,9 @@ class prestashop_backend(orm.Model):
             ids = [ids]
         session = ConnectorSession(cr, uid, context=context)
         for backend_record in self.browse(cr, uid, ids, context=context):
-            since_date = self._date_as_user_tz(
-                cr, uid, backend_record.import_partners_since
-            )
+            since_date = None
+            if backend_record.import_partners_since:
+                since_date = datetime.strptime(backend_record.import_partners_since, DEFAULT_SERVER_DATETIME_FORMAT)
             import_customers_since.delay(
                 session,
                 backend_record.id,
@@ -176,9 +176,9 @@ class prestashop_backend(orm.Model):
             ids = [ids]
         session = ConnectorSession(cr, uid, context=context)
         for backend_record in self.browse(cr, uid, ids, context=context):
-            since_date = self._date_as_user_tz(
-                cr, uid, backend_record.import_products_since
-            )
+            since_date = None
+            if backend_record.import_products_since:
+                since_date = datetime.strptime(backend_record.import_products_since, DEFAULT_SERVER_DATETIME_FORMAT)
             import_products.delay(session, backend_record.id, since_date,
                                   priority=10)
         return True
@@ -210,9 +210,9 @@ class prestashop_backend(orm.Model):
             ids = [ids]
         session = ConnectorSession(cr, uid, context=context)
         for backend_record in self.browse(cr, uid, ids, context=context):
-            since_date = self._date_as_user_tz(
-                cr, uid, backend_record.import_orders_since
-            )
+            since_date = None
+            if backend_record.import_orders_since:
+                since_date = datetime.strptime(backend_record.import_orders_since, DEFAULT_SERVER_DATETIME_FORMAT)
             import_orders_since.delay(
                 session,
                 backend_record.id,
@@ -234,9 +234,9 @@ class prestashop_backend(orm.Model):
             ids = [ids]
         session = ConnectorSession(cr, uid, context=context)
         for backend_record in self.browse(cr, uid, ids, context=context):
-            since_date = self._date_as_user_tz(
-                cr, uid, backend_record.import_refunds_since
-            )
+            since_date = None
+            if backend_record.import_refunds_since:
+                since_date = datetime.strptime(backend_record.import_refunds_since, DEFAULT_SERVER_DATETIME_FORMAT)
             import_refunds.delay(session, backend_record.id, since_date)
         return True
 
@@ -245,9 +245,9 @@ class prestashop_backend(orm.Model):
             ids = [ids]
         session = ConnectorSession(cr, uid, context=context)
         for backend_record in self.browse(cr, uid, ids, context=context):
-            since_date = self._date_as_user_tz(
-                cr, uid, backend_record.import_suppliers_since
-            )
+            since_date = None
+            if backend_record.import_suppliers_since:
+                since_date = datetime.strptime(backend_record.import_suppliers_since, DEFAULT_SERVER_DATETIME_FORMAT)
             import_suppliers.delay(session, backend_record.id, since_date)
         return True
 

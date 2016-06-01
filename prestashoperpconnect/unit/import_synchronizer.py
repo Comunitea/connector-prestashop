@@ -217,7 +217,7 @@ class PaymentMethodsImporter(BatchImporter):
         )
 
     def _import_record(self, record):
-        ids = self.session.search('payment.method', [
+        ids = self.session.env['payment.method'].search([
             ('name', '=', record['payment']),
             ('company_id', '=', self.backend_record.company_id.id),
         ])
@@ -529,7 +529,7 @@ class TranslatableRecordImporter(PrestashopImporter):
         erp_language_id = language_binder.to_openerp(prestashop_id)
         if erp_language_id is None:
             return None
-        model = self.environment.session.pool.get('prestashop.res.lang')
+        model = self.connector_env.session.pool.get('prestashop.res.lang')
         erp_lang = model.read(
             self.session.cr,
             self.session.uid,
@@ -539,7 +539,7 @@ class TranslatableRecordImporter(PrestashopImporter):
 
     def find_each_language(self, record):
         languages = {}
-        for field in self._translatable_fields[self.environment.model_name]:
+        for field in self._translatable_fields[self.connector_env.model_name]:
             # TODO FIXME in prestapyt
             if not isinstance(record[field]['language'], list):
                 record[field]['language'] = [record[field]['language']]
@@ -554,7 +554,7 @@ class TranslatableRecordImporter(PrestashopImporter):
     def _split_per_language(self, record):
         splitted_record = {}
         languages = self.find_each_language(record)
-        model_name = self.environment.model_name
+        model_name = self.connector_env.model_name
         for language_id, language_code in languages.items():
             splitted_record[language_code] = record.copy()
             for field in self._translatable_fields[model_name]:
@@ -579,7 +579,6 @@ class TranslatableRecordImporter(PrestashopImporter):
 
         # import the missing linked resources
         self._import_dependencies()
-
         # split prestashop data for every lang
         splitted_record = self._split_per_language(self.prestashop_record)
 
@@ -608,7 +607,6 @@ class TranslatableRecordImporter(PrestashopImporter):
 
         if binding is None:
             binding = self._get_binding()
-
         if binding:
             record = mapped.values()
         else:
@@ -1031,13 +1029,13 @@ def import_products(session, backend_id, since_date):
         filters,
         priority=15
     )
-#    import_batch(
-#        session,
-#        'prestashop.product.template',
-#        backend_id,
-#        filters,
-#        priority=15
-#    )
+    import_batch(
+        session,
+        'prestashop.product.template',
+        backend_id,
+        filters,
+        priority=15
+    )
     session.pool.get('prestashop.backend').write(
         session.cr,
         session.uid,

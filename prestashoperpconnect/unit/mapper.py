@@ -334,7 +334,7 @@ class AddressImportMapper(PrestashopImportMapper):
     @mapping
     def customer(self, record):
         return {'customer': True}
-    
+
     @mapping
     def country(self, record):
         if record.get('id_country'):
@@ -560,10 +560,13 @@ class SaleOrderMapper(PrestashopImportMapper):
 
     @mapping
     def date_order(self, record):
-        local = pytz.timezone(self.backend_record.tz)
-        naive = datetime.datetime.strptime(record['date_add'], DATETIME_FORMAT)
-        local_dt = local.localize(naive, is_dst=None)
-        date_order = local_dt.astimezone(pytz.utc).strftime(DATETIME_FORMAT)
+        if self.backend_record.tz:
+            local = pytz.timezone(self.backend_record.tz)
+            naive = datetime.datetime.strptime(record['date_add'], DATETIME_FORMAT)
+            local_dt = local.localize(naive, is_dst=None)
+            date_order = local_dt.astimezone(pytz.utc).strftime(DATETIME_FORMAT)
+        else:
+            date_order = record['date_add']
         return {'date_order': date_order}
 
 
@@ -882,4 +885,4 @@ class PrestashopShippingLineBuilder(ShippingLineBuilder):
         vals = super(PrestashopShippingLineBuilder, self).get_line()
         if self.is_delivery:
             vals['is_delivery'] = True
-        return vals 
+        return vals

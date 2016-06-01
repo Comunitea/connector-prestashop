@@ -105,12 +105,12 @@ class ProductImageMapper(PrestashopImportMapper):
     _model_name = 'prestashop.product.image'
 
     direct = [
-        ('content', 'image'),
+        ('content', 'file_db_store'),
     ]
 
     @mapping
     def product_id(self, record):
-        binder = self.binder_for('prestashop;product.template')
+        binder = self.binder_for('prestashop.product.template')
         return {'product_id': binder.to_openerp(
             record['id_product'], unwrap=True
         )}
@@ -292,7 +292,8 @@ class TemplateMapper(PrestashopImportMapper):
             tax_group_id,
             ['tax_ids']
         )
-        return {"taxes_id": [(6, 0, tax_ids['tax_ids'])]}
+        if tax_ids:
+            return {"taxes_id": [(6, 0, tax_ids['tax_ids'])]}
 
     @mapping
     def type(self, record):
@@ -346,6 +347,7 @@ class ProductInventoryExporter(Exporter):
         template = self.session.env[self.model._name].browse(binding_id)
         adapter = self.unit_for(GenericAdapter, '_import_stock_available')
         filter = self.get_filter(template)
+
         adapter.export_quantity(filter, int(template.quantity))
 
 
@@ -418,7 +420,7 @@ class ProductInventoryImporter(PrestashopImporter):
             'product_id': template_id,
             'new_quantity': qty,
         }
- 
+
         template_qty_id = self.session.create("stock.change.product.qty",
                                               vals)
         context = {'active_id': template_id}

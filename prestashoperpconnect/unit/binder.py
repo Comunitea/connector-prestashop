@@ -64,6 +64,7 @@ class PrestashopModelBinder(PrestashopBinder):
         'prestashop.product.supplierinfo',
         'prestashop.mail.message',
         'prestashop.groups.pricelist',
+        '_import_stock_available',
     ]
 
     def to_openerp(self, external_id, unwrap=False, browse=False):

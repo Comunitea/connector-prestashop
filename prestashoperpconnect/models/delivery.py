@@ -21,7 +21,7 @@
 ##############################################################################
 
 import logging
-from openerp import models, fields
+from openerp import models, fields, api
 
 _logger = logging.getLogger(__name__)
 
@@ -56,10 +56,13 @@ class PrestashopDeliveryCarrier(models.Model):
 class DeliveryCarrier(models.Model):
     _inherit = "delivery.carrier"
 
+    def _company_get(self):
+        company_id = self.env['res.company']._company_default_get(self._name)
+        return self.env['res.company'].browse(company_id)
+
     prestashop_bind_ids = fields.One2many(
         'prestashop.delivery.carrier', 'openerp_id',
         string='PrestaShop Bindings')
     company_id = fields.Many2one(
-        'res.company', string='Company', select=1, required=True,
-        default=lambda self: self.env['res.company']._company_default_get(
-            'delivery.carrier'))
+        'res.company', string='Company', required=True,
+        default=_company_get)
