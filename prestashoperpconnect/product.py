@@ -34,7 +34,8 @@ from openerp.addons.connector.unit.synchronizer import Exporter
 from .unit.import_synchronizer import (DelayedBatchImporter,
                                        PrestashopImporter,
                                        import_record)
-from openerp.addons.connector.unit.mapper import mapping
+from openerp.addons.connector.unit.mapper import (mapping,
+                                                  only_create)
 
 from prestapyt import PrestaShopWebServiceError
 
@@ -221,7 +222,7 @@ class TemplateMapper(PrestashopImportMapper):
         #not self.has_combinations(record)
         return {'purchase_ok': True}
 
-    @mapping
+    '''@mapping
     def categ_id(self, record):
         if not int(record['id_category_default']):
             return
@@ -257,11 +258,23 @@ class TemplateMapper(PrestashopImportMapper):
                 category['id'], unwrap=True
             )
             product_categories.append(category_id)
-        return {'categ_ids': [(6, 0, product_categories)]}
+        return {'categ_ids': [(6, 0, product_categories)]}'''
 
     @mapping
     def backend_id(self, record):
         return {'backend_id': self.backend_record.id}
+
+    @only_create
+    @mapping
+    def openerp_id(self, record):
+        """ Will bind  on a existing product with the same code"""
+        product = self.env['product.product'].search(
+            [('default_code', '=', record['reference']), '|',
+             ('active', '=', False), ('active', '=', True)], order='active desc', limit=1)
+        if product:
+            return {'openerp_id': product.id}
+        pass
+
 
     @mapping
     def company_id(self, record):

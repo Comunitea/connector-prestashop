@@ -151,7 +151,7 @@ class PartnerImportMapper(PrestashopImportMapper):
         ('note', 'comment'),
         ('id_shop_group', 'shop_group_id'),
         ('id_shop', 'shop_id'),
-        ('id_default_group', 'default_category_id'),
+        #('id_default_group', 'default_category_id'),
     ]
 
     @mapping
@@ -181,7 +181,8 @@ class PartnerImportMapper(PrestashopImportMapper):
 
     @mapping
     def groups(self, record):
-        groups = record.get('associations', {}).get('groups', {}).get('group', [])
+        pass
+        '''groups = record.get('associations', {}).get('groups', {}).get('group', [])
         if not isinstance(groups, list):
             groups = [groups]
         partner_categories = []
@@ -192,7 +193,7 @@ class PartnerImportMapper(PrestashopImportMapper):
             category_id = binder.to_openerp(group['id'])
             partner_categories.append(category_id)
 
-        return {'group_ids': [(6, 0, partner_categories)]}
+        return {'group_ids': [(6, 0, partner_categories)]}'''
 
     @mapping
     def backend_id(self, record):
@@ -230,6 +231,23 @@ class PartnerImportMapper(PrestashopImportMapper):
     def company_id(self, record):
         return {'company_id': self.backend_record.company_id.id}
 
+    @only_create
+    @mapping
+    def openerp_id(self, record):
+        """ Will bind the customer on a existing partner
+        with the same email"""
+        partner = self.env['res.partner'].search(
+            [('email', '=', record['email']),
+             ('customer', '=', True),
+             '|',
+             ('is_company', '=', True), '&',
+             ('parent_id', '=', False),
+             '|', ('active', '=', False), ('active', '=', True)],
+            limit=1,
+        )
+        if partner:
+            return {'openerp_id': partner.id}
+        pass
 
 @prestashop
 class SupplierMapper(PrestashopImportMapper):

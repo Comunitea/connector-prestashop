@@ -43,7 +43,6 @@ class PrestashopModelBinder(PrestashopBinder):
         'prestashop.shop',
         'prestashop.res.partner',
         'prestashop.address',
-        'prestashop.res.partner.category',
         'prestashop.res.lang',
         'prestashop.res.country',
         'prestashop.res.currency',

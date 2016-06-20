@@ -286,13 +286,14 @@ class ResPartnerRecordImporter(PrestashopImporter):
     _model_name = 'prestashop.res.partner'
 
     def _import_dependencies(self):
-        groups = self.prestashop_record.get('associations', {}) \
+        pass
+        '''groups = self.prestashop_record.get('associations', {}) \
             .get('groups', {}).get('group', [])
         if not isinstance(groups, list):
             groups = [groups]
         for group in groups:
             self._check_dependency(group['id'],
-                                   'prestashop.res.partner.category')
+                                   'prestashop.res.partner.category')'''
 
     def _after_import(self, erp_id):
         binder = self.binder_for(self._model_name)
@@ -841,7 +842,7 @@ class TemplateRecordImporter(TranslatableRecordImporter):
 
     def _import_dependencies(self):
         self._import_default_category()
-        self._import_categories()
+        #self._import_categories()
 
     def get_template_model_id(self):
         ids = self.session.search('ir.model', [
@@ -985,9 +986,9 @@ def import_customers_since(session, backend_id, since_date=None):
         date_str = since_date.strftime('%Y-%m-%d %H:%M:%S')
         filters = {'date': '1', 'filter[date_upd]': '>[%s]' % (date_str)}
     now_fmt = datetime.now().strftime(DEFAULT_SERVER_DATETIME_FORMAT)
-    import_batch(
+    '''import_batch(
         session, 'prestashop.res.partner.category', backend_id, filters
-    )
+    )'''
     import_batch(
         session, 'prestashop.res.partner', backend_id, filters, priority=15
     )
