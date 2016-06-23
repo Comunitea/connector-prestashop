@@ -841,7 +841,8 @@ class TemplateRecordImporter(TranslatableRecordImporter):
             pass
 
     def _import_dependencies(self):
-        self._import_default_category()
+        pass
+        #self._import_default_category()
         #self._import_categories()
 
     def get_template_model_id(self):
