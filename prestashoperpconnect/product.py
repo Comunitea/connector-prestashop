@@ -46,6 +46,7 @@ from .unit.mapper import PrestashopImportMapper
 from backend import prestashop
 
 from prestapyt import PrestaShopWebServiceDict
+import html2text
 
 try:
     from xml.etree import cElementTree as ElementTree
@@ -135,8 +136,6 @@ class TemplateMapper(PrestashopImportMapper):
     _model_name = 'prestashop.product.template'
 
     direct = [
-        ('description', 'description_html'),
-        ('description_short', 'description_short_html'),
         ('weight', 'weight'),
         ('wholesale_price', 'standard_price'),
         ('price', 'list_price'),
@@ -199,9 +198,9 @@ class TemplateMapper(PrestashopImportMapper):
     def descriptions(self, record):
         result = {}
         if record.get('description'):
-            result['description_sale'] = record['description']
+            result['description_sale'] = html2text.html2text(record['description'])
         if record.get('description_short'):
-            result['description'] = record['description_short']
+            result['description'] = html2text.html2text(record['description_short'])
         return result
 
 
