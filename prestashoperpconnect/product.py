@@ -137,8 +137,6 @@ class TemplateMapper(PrestashopImportMapper):
 
     direct = [
         ('weight', 'weight'),
-        ('wholesale_price', 'standard_price'),
-        ('price', 'list_price'),
         ('id_shop_default', 'default_shop_id'),
         ('link_rewrite', 'link_rewrite'),
         ('reference', 'reference'),
