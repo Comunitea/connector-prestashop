@@ -265,6 +265,8 @@ class TemplateMapper(PrestashopImportMapper):
     @mapping
     def openerp_id(self, record):
         """ Will bind  on a existing product with the same code"""
+        if not record['reference']:
+            return {}
         product = self.env['product.product'].search(
             [('default_code', '=', record['reference']), '|',
              ('active', '=', False), ('active', '=', True)], order='active desc', limit=1)
