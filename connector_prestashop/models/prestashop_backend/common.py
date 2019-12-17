@@ -293,19 +293,23 @@ class PrestashopBackend(models.Model):
 
     @api.multi
     def import_customers_since(self):
+        now_fmt = fields.Datetime.now()
         for backend_record in self:
             since_date = backend_record.import_partners_since
             self.env['prestashop.res.partner'].with_delay(
             ).import_customers_since(
                 backend_record=backend_record, since_date=since_date)
+            backend_record.mport_partners_since = now_fmt
         return True
 
     @api.multi
     def import_products(self):
+        now_fmt = fields.Datetime.now()
         for backend_record in self:
             since_date = backend_record.import_products_since
             self.env['prestashop.product.template'].with_delay(
             ).import_products(backend_record, since_date)
+            backend_record.import_products_since = now_fmt
         return True
 
     @api.multi
@@ -333,10 +337,13 @@ class PrestashopBackend(models.Model):
 
     @api.multi
     def import_sale_orders(self):
+        now_fmt = fields.Datetime.now()
         for backend_record in self:
             since_date = backend_record.import_orders_since
             backend_record.env['prestashop.sale.order'].with_delay(
             ).import_orders_since(backend_record, since_date)
+
+            backend_record.import_orders_since = now_fmt
         return True
 
     @api.multi
@@ -357,18 +364,22 @@ class PrestashopBackend(models.Model):
 
     @api.multi
     def import_refunds(self):
+        now_fmt = fields.Datetime.now()
         for backend_record in self:
             since_date = backend_record.import_refunds_since
             backend_record.env['prestashop.refund'].import_refunds(
                 backend_record, since_date)
+            backend_record.import_refunds_since = now_fmt
         return True
 
     @api.multi
     def import_suppliers(self):
+        now_fmt = fields.Datetime.now()
         for backend_record in self:
             since_date = backend_record.import_suppliers_since
             backend_record.env['prestashop.supplier'].import_suppliers(
                 backend_record, since_date)
+            backend_record.import_suppliers_since = now_fmt
         return True
 
     def get_version_ps_key(self, key):

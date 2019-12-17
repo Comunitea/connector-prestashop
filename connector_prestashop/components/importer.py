@@ -254,6 +254,7 @@ class PrestashopImporter(AbstractComponent):
         # Keep a lock on this import until the transaction is committed
         self.advisory_lock_or_retry(lock_name,
                                     retry_seconds=RETRY_ON_ADVISORY_LOCK)
+        import pdb; pdb.set_trace()
         if not self.prestashop_record:
             self.prestashop_record = self._get_prestashop_data()
 

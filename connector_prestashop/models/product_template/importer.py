@@ -128,6 +128,7 @@ class TemplateMapper(Component):
 #             return {'odoo_id': product.id}
         if self.backend_record.matching_product_template:
             if self.has_combinations(record):
+                print('ENTRA EN COMBINACIONES')
                 # Browse combinations for matching products and find if there
                 # is a potential template to be matched
                 template = self.env['product.template']
@@ -177,10 +178,24 @@ class TemplateMapper(Component):
                 if self.backend_record.matching_product_ch == 'reference':
                     if code:
                         if self._template_code_exists(code):
-                            product = self.env['product.template'].search(
-                                [('default_code', '=', code)], limit=1)
-                            if product:
-                                return {'odoo_id': product.id}
+                            model = self.env['product.template']
+                            template = model.with_context(active_test=False).search([
+                                ('default_code', '=', code)
+                            ], limit=1)
+                            if not template and 'NWPY' == code[:4]:
+                                template = model.with_context(active_test=False).search([
+                                    ('default_code', '=', code[4:])
+                                ], limit=1)
+                            if not template and 'NW' == code[:2]:
+                                template = model.with_context(active_test=False).search([
+                                    ('default_code', '=', code[2:])
+                                ], limit=1)
+                            if not template and 'PY' in code[:2]:
+                                template = model.with_context(active_test=False).search([
+                                    ('default_code', '=', code[2:])
+                                ], limit=1)
+                            if template:
+                                return {'odoo_id': template.id}
 
                 if self.backend_record.matching_product_ch == 'barcode':
                     if code:
@@ -194,9 +209,21 @@ class TemplateMapper(Component):
         model = self.env['product.template']
         template_binder = self.binder_for('prestashop.product.template')
         template = model.with_context(active_test=False).search([
-            ('default_code', '=', code),
-            ('company_id', '=', self.backend_record.company_id.id),
+            ('default_code', '=', code)
         ], limit=1)
+        if not template and 'NWPY' == code[:4]:
+            template = model.with_context(active_test=False).search([
+                ('default_code', '=', code[4:])
+            ], limit=1)
+        if not template and 'NW' == code[:2]:
+            template = model.with_context(active_test=False).search([
+                ('default_code', '=', code[2:])
+            ], limit=1)
+        if not template and 'PY' in code[:2]:
+            template = model.with_context(active_test=False).search([
+                ('default_code', '=', code[2:])
+            ], limit=1)
+
         return template and not template_binder.to_external(
             template, wrap=True)
 
@@ -211,6 +238,8 @@ class TemplateMapper(Component):
             )
         if not self._template_code_exists(code):
             return {'default_code': code}
+        if self.backend_record.matching_product_template and self.backend_record.matching_product_ch == 'reference':
+            return {}
         i = 1
         current_code = '%s_%d' % (code, i)
         while self._template_code_exists(current_code):
@@ -292,16 +321,16 @@ class TemplateMapper(Component):
     def company_id(self, record):
         return {'company_id': self.backend_record.company_id.id}
 
-    @mapping
-    def barcode(self, record):
-        if self.has_combinations(record):
-            return {}
-        barcode = record.get('barcode') or record.get('ean13')
-        if barcode in ['', '0']:
-            return {}
-        if self.env['barcode.nomenclature'].check_ean(barcode):
-            return {'barcode': barcode}
-        return {}
+    # @mapping
+    # def barcode(self, record):
+    #     if self.has_combinations(record):
+    #         return {}
+    #     barcode = record.get('barcode') or record.get('ean13')
+    #     if barcode in ['', '0']:
+    #         return {}
+    #     if self.env['barcode.nomenclature'].check_ean(barcode):
+    #         return {'barcode': barcode}
+    #     return {}
 
     def _get_tax_ids(self, record):
         # if record['id_tax_rules_group'] == '0':

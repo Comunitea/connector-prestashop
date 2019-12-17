@@ -77,6 +77,8 @@ class SaleImportRule(Component):
         """
         ps_payment_method = record['payment']
         mode_binder = self.binder_for('account.payment.mode')
+        if not ps_payment_method:
+            return True
         payment_mode = mode_binder.to_internal(ps_payment_method)
         if not payment_mode:
             raise FailedJobError(_(
@@ -408,7 +410,6 @@ class SaleOrderLineMapper(Component):
     _apply_on = 'prestashop.sale.order.line'
 
     direct = [
-        ('product_name', 'name'),
         ('id', 'sequence'),
         ('product_quantity', 'product_uom_qty'),
         ('reduction_percent', 'discount'),

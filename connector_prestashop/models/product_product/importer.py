@@ -191,6 +191,8 @@ class ProductCombinationMapper(Component):
             code = "%s_%s" % (record['id_product'], record['id'])
         if not self._product_code_exists(code):
             return {'default_code': code}
+        if self.backend_record.matching_product_template and self.backend_record.matching_product_ch == 'reference':
+            return {}
         i = 1
         current_code = '%s_%s' % (code, i)
         while self._product_code_exists(current_code):
@@ -260,10 +262,24 @@ class ProductCombinationMapper(Component):
         """ Will bind the product to an existing one with the same code """
         if self.backend_record.matching_product_template:
             code = record.get(self.backend_record.matching_product_ch)
+            import pdb; pdb.set_trace()
             if self.backend_record.matching_product_ch == 'reference':
                 if code:
-                    product = self.env['product.product'].search(
-                        [('default_code', '=', code)], limit=1)
+                    product = self.env['product.product'].with_context(active_test=False).search([
+                        ('default_code', '=', code)
+                    ], limit=1)
+                    if not product and 'NWPY' == code[:4]:
+                        product = self.env['product.product'].with_context(active_test=False).search([
+                            ('default_code', '=', code[4:])
+                        ], limit=1)
+                    if not product and 'NW' == code[:2]:
+                        product = self.env['product.product'].with_context(active_test=False).search([
+                            ('default_code', '=', code[2:])
+                        ], limit=1)
+                    if not product and 'PY' in code[:2]:
+                        product = self.env['product.product'].with_context(active_test=False).search([
+                            ('default_code', '=', code[:2])
+                        ], limit=1)
                     if product:
                         return {'odoo_id': product.id}
             if self.backend_record.matching_product_ch == 'barcode':

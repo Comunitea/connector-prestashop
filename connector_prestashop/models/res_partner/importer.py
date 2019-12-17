@@ -25,7 +25,7 @@ class PartnerImportMapper(Component):
         ('note', 'comment'),
         (external_to_m2o('id_shop_group'), 'shop_group_id'),
         (external_to_m2o('id_shop'), 'shop_id'),
-        (external_to_m2o('id_default_group'), 'default_category_id'),
+        #(external_to_m2o('id_default_group'), 'default_category_id'),
     ]
 
     @mapping
@@ -137,7 +137,7 @@ class AddressImportMapper(Component):
         ('date_add', 'date_add'),
         ('date_upd', 'date_upd'),
         ('alias', 'alias'),
-        ('company', 'company'),
+        # ('company', 'company'),
         (external_to_m2o('id_customer'), 'prestashop_partner_id'),
     ]
 
