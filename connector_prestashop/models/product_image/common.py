@@ -39,7 +39,6 @@ class PrestashopProductImage(models.Model):
         with backend.work_on(self._name) as work:
             importer = work.component(usage='record.importer')
             test = importer.run(product_tmpl_id, image_id)
-            import pdb; pdb.set_trace()
             return test
 
 

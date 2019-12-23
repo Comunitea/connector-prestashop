@@ -262,7 +262,6 @@ class ProductCombinationMapper(Component):
         """ Will bind the product to an existing one with the same code """
         if self.backend_record.matching_product_template:
             code = record.get(self.backend_record.matching_product_ch)
-            import pdb; pdb.set_trace()
             if self.backend_record.matching_product_ch == 'reference':
                 if code:
                     product = self.env['product.product'].with_context(active_test=False).search([
