@@ -1,0 +1,6 @@
+html2text
+git+git://github.com/prestapyt/prestapyt@master#egg=prestapyt
+bs4
+# tests dependencies
+freezegun
+vcrpy==1.10.5
