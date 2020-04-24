@@ -133,12 +133,16 @@ class AddressImportMapper(Component):
         ('phone_mobile', 'mobile'),
         ('postcode', 'zip'),
         ('date_add', 'date_add'),
-        ('date_upd', 'date_upd'),
         ('alias', 'alias'),
         ('company', 'company'),
         (external_to_m2o('id_customer'), 'prestashop_partner_id'),
     ]
 
+    @mapping
+    def date_upd(self, record):
+        if record.get('date_upd') in ['0000-00-00 00:00:00', '']:
+            return {}
+        return {'date_upd': record.get('date_upd')}
     @mapping
     def backend_id(self, record):
         return {'backend_id': self.backend_record.id}
