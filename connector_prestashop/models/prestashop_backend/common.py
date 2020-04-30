@@ -162,6 +162,10 @@ class PrestashopBackend(models.Model):
         default='qty_available',
         required=True,
     )
+    import_image_type = fields.Selection(
+        [('url', 'URL'), ('db', 'Database')],
+        default='url')
+    resize_images = fields.Boolean()
 
     @api.constrains('product_qty_field')
     def check_product_qty_field_dependencies_installed(self):
