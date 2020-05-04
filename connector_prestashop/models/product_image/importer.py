@@ -7,7 +7,7 @@ from odoo.addons.connector.components.mapper import mapping
 import mimetypes
 import logging
 
-from odoo import _, tools
+from odoo import _
 
 _logger = logging.getLogger(__name__)
 try:
@@ -22,6 +22,10 @@ class ProductImageMapper(Component):
     _apply_on = 'prestashop.product.image'
 
     _model_name = 'prestashop.product.image'
+
+    direct = [
+        # ('content', 'file_db_store'),
+    ]
 
     @mapping
     def from_template(self, record):
@@ -40,14 +44,7 @@ class ProductImageMapper(Component):
 
     @mapping
     def image_url(self, record):
-        if self.backend_record.import_image_type == 'url':
-            return {'url': record['full_public_url']}
-        elif self.backend_record.import_image_type == 'db':
-            image_data = record['content']
-            if self.backend_record.resize_images:
-                image_data = tools.image_get_resized_images(
-                    image_data, return_small=False)['image_medium']
-            return {'file_db_store': image_data}
+        return {'url': record['full_public_url']}
 
     @mapping
     def filename(self, record):
@@ -55,7 +52,8 @@ class ProductImageMapper(Component):
 
     @mapping
     def storage(self, record):
-        return {'storage': self.backend_record.import_image_type}
+        return {'storage': 'url'}
+        # return {'storage': 'db'}
 
     @mapping
     def owner_model(self, record):
