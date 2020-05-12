@@ -9,10 +9,14 @@ _logger = logging.getLogger(__name__)
 
 class DeliveryCarrierImporter(Component):
     _name = 'prestashop.delivery.carrier.importer'
-    _inherit = 'prestashop.importer'
+    _inherit = 'prestashop.translatable.record.importer'
     _apply_on = 'prestashop.delivery.carrier'
 
     _model_name = ['prestashop.delivery.carrier']
+
+    _translatable_fields = {
+        'prestashop.delivery.carrier': ['name'],
+    }
 
 
 class CarrierImportMapper(Component):
