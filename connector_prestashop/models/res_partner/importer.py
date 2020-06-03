@@ -173,7 +173,7 @@ class AddressImportMapper(Component):
     def parent_id(self, record):
         binder = self.binder_for("prestashop.res.partner")
         parent = binder.to_internal(record["id_customer"], unwrap=True)
-        return {"parent_id": parent.id}
+        return {"parent_id": parent.id, 'lang': parent.lang}
 
     @mapping
     def name(self, record):
