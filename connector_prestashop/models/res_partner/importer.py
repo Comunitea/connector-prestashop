@@ -213,7 +213,10 @@ class AddressImporter(Component):
                 ' ', '').replace('-', '')
         if vat_number:
             if self._check_vat(vat_number, binding.odoo_id.country_id):
-                binding.parent_id.write({'vat': vat_number})
+                if binding.parent_id:
+                    binding.parent_id.write({'vat': vat_number})
+                else:
+                    binding.write({'vat': vat_number})
             else:
                 msg = _('Please, check the VAT number: %s') % vat_number
                 self.backend_record.add_checkpoint(
