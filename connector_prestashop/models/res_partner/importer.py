@@ -133,21 +133,25 @@ class AddressImportMapper(Component):
         ('phone_mobile', 'mobile'),
         ('postcode', 'zip'),
         ('date_add', 'date_add'),
-        ('date_upd', 'date_upd'),
         ('alias', 'alias'),
         ('company', 'company'),
         (external_to_m2o('id_customer'), 'prestashop_partner_id'),
     ]
 
     @mapping
+    def date_upd(self, record):
+        if record.get('date_upd') in ['0000-00-00 00:00:00', '']:
+            return {}
+        return {'date_upd': record.get('date_upd')}
+    @mapping
     def backend_id(self, record):
         return {'backend_id': self.backend_record.id}
 
     @mapping
     def parent_id(self, record):
-        binder = self.binder_for('prestashop.res.partner')
-        parent = binder.to_internal(record['id_customer'], unwrap=True)
-        return {'parent_id': parent.id}
+        binder = self.binder_for("prestashop.res.partner")
+        parent = binder.to_internal(record["id_customer"], unwrap=True)
+        return {"parent_id": parent.id, 'lang': parent.lang}
 
     @mapping
     def name(self, record):
@@ -209,11 +213,14 @@ class AddressImporter(Component):
                 ' ', '').replace('-', '')
         if vat_number:
             if self._check_vat(vat_number, binding.odoo_id.country_id):
-                binding.parent_id.write({'vat': vat_number})
+                if binding.parent_id:
+                    binding.parent_id.write({'vat': vat_number})
+                else:
+                    binding.write({'vat': vat_number})
             else:
                 msg = _('Please, check the VAT number: %s') % vat_number
                 self.backend_record.add_checkpoint(
-                    binding.parent_id,
+                    binding.parent_id and binding.parent_id or binding,
                     message=msg,
                 )
 
