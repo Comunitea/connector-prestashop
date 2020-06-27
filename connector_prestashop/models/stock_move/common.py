@@ -29,6 +29,7 @@ class StockQuant(models.Model):
         ps_locations = location_obj.get_prestashop_stock_locations()
         quant = super(StockQuant, self).create(vals)
         if quant.location_id in ps_locations:
+            quant.invalidate_cache()
             quant.product_id.update_prestashop_qty()
         return quant
 
@@ -39,7 +40,7 @@ class StockQuant(models.Model):
         for quant in self:
             location = quant.location_id
             super(StockQuant, self).write(vals)
-            if location in ps_locations or 'location_id' in vals and quant.location_id in ps_locations:
+            if location in ps_locations or ('location_id' in vals and quant.location_id in ps_locations):
                 quant.invalidate_cache()
                 quant.product_id.update_prestashop_qty()
         return True
