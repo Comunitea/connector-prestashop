@@ -28,6 +28,7 @@ class StockQuant(models.Model):
         location_obj = self.env['stock.location']
         ps_locations = location_obj.get_prestashop_stock_locations()
         quant = super(StockQuant, self).create(vals)
+        quant.invalidate_cache()
         if quant.location_id in ps_locations:
             quant.product_id.update_prestashop_qty()
         return quant
