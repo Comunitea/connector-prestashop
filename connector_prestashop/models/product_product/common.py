@@ -22,6 +22,7 @@ class ProductProduct(models.Model):
     )
 
     @api.multi
+    @job(default_channel='root.prestashop')
     def update_prestashop_qty(self):
         for product in self:
             if product.product_variant_count > 1:
