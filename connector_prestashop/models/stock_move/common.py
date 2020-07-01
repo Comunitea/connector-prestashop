@@ -87,5 +87,5 @@ class StockMove(models.Model):
                 super(StockMove, self).write(vals)
                 if any([True for x in locations if x in ps_locations_ids]):
                     move.product_id.invalidate_cache()
-                    move.product_id.with_delay().update_prestashop_qty()
+                    move.product_id.with_delay(30).update_prestashop_qty()
         return True
