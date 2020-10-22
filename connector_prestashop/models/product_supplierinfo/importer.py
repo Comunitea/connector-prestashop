@@ -67,7 +67,7 @@ class SupplierImporter(Component):
         super(SupplierImporter, self)._after_import(binding)
         binder = self.binder_for()
         ps_id = binder.to_external(binding)
-        self.env['prestashop.product.supplierinfo'].with_delay().import_batch(
+        self.env['prestashop.product.supplierinfo'].with_context(company_id=self.backend_record.company_id.id).with_delay().import_batch(
             self.backend_record,
             filters={'filter[id_supplier]': '%d' % ps_id},
         )

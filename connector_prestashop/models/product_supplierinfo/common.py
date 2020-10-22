@@ -37,7 +37,7 @@ class PrestashopSupplier(models.Model):
         if since_date:
             filters = {'date': '1', 'filter[date_upd]': '>[%s]' % (since_date)}
         now_fmt = fields.Datetime.now()
-        self.env['prestashop.supplier'].with_delay().import_batch(
+        self.env['prestashop.supplier'].with_context(company_id=backend.company_id.id).with_delay().import_batch(
             backend,
             filters,
             **kwargs
