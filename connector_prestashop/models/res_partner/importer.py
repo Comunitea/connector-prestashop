@@ -108,7 +108,7 @@ class ResPartnerImporter(Component):
         super(ResPartnerImporter, self)._after_import(binding)
         binder = self.binder_for()
         ps_id = binder.to_external(binding)
-        self.env['prestashop.address'].with_delay(priority=10).import_batch(
+        self.env['prestashop.address'].with_context(company_id=self.backend_record.company_id.id).with_delay(priority=10).import_batch(
             backend=self.backend_record,
             filters={'filter[id_customer]': '%d' % (ps_id,)})
 

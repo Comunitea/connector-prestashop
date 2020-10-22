@@ -377,7 +377,7 @@ class DelayedBatchImporter(AbstractComponent):
         channel = kwargs.pop('channel', None)
         identity_key = kwargs.pop('identity_key', None)
 
-        self.env[self.model._name].with_delay(
+        self.env[self.model._name].with_context(company_id=self.backend_record.company_id.id).with_delay(
             priority=priority,
             eta=eta,
             max_retries=max_retries,

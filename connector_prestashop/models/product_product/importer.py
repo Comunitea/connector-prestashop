@@ -82,7 +82,7 @@ class ProductCombinationImporter(Component):
             # 'filter[id_product]': ps_id,
             'filter[id_product_attribute]': ps_id
         }
-        self.env['prestashop.product.supplierinfo'].with_delay().import_batch(
+        self.env['prestashop.product.supplierinfo'].with_context(company_id=self.backend_record.company_id.id).with_delay().import_batch(
             self.backend_record,
             filters=filters
         )
@@ -240,6 +240,7 @@ class ProductCombinationMapper(Component):
 
     @mapping
     def specific_price(self, record):
+        import wdb; wdb.set_trace()
         product = self.binder_for(
             'prestashop.product.combination').to_internal(
             record['id'], unwrap=True

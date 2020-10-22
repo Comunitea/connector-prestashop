@@ -47,6 +47,7 @@ class ProductTemplate(models.Model):
 
     @api.multi
     def update_prestashop_quantities(self):
+        return True
         for template in self:
             # Recompute product template PrestaShop qty
             template.mapped('prestashop_bind_ids').recompute_prestashop_qty()
@@ -249,6 +250,12 @@ class ProductInventoryAdapter(Component):
             stock = res[first_key]
             stock['quantity'] = int(quantity['quantity'])
             stock['out_of_stock'] = int(quantity['out_of_stock'])
+            print('======================================')
+            print('exportación a prestashop de {}'.format(filters))
+            print(stock)
+            from datetime import datetime
+            print(datetime.now())
+            print('======================================')
             client.edit(self._prestashop_model, {
                 self._export_node_name: stock
             })

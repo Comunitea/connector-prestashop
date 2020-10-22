@@ -585,7 +585,7 @@ class ProductTemplateImporter(Component):
                                 **kwargs)
 
     def _delay_product_image_variant(self, combinations, **kwargs):
-        delayable = self.env['prestashop.product.combination'].with_delay(
+        delayable = self.env['prestashop.product.combination'].with_context(company_id=self.backend_record.company_id.id).with_delay(
             priority=15)
         delayable.set_product_image_variant(
             self.backend_record,
@@ -624,7 +624,7 @@ class ProductTemplateImporter(Component):
             images = [images]
         for image in images:
             if image.get('id'):
-                delayable = self.env['prestashop.product.image'].with_delay(
+                delayable = self.env['prestashop.product.image'].with_context(company_id=self.backend_record.company_id.id).with_delay(
                     priority=10)
                 delayable.import_product_image(
                     self.backend_record,

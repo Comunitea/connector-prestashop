@@ -284,7 +284,7 @@ class PrestashopBackend(models.Model):
     def import_customers_since(self):
         for backend_record in self:
             since_date = backend_record.import_partners_since
-            self.env['prestashop.res.partner'].with_delay(
+            self.env['prestashop.res.partner'].with_context(company_id=backend_record.company_id.id).with_delay(
             ).import_customers_since(
                 backend_record=backend_record, since_date=since_date)
         return True
@@ -293,14 +293,14 @@ class PrestashopBackend(models.Model):
     def import_products(self):
         for backend_record in self:
             since_date = backend_record.import_products_since
-            self.env['prestashop.product.template'].with_delay(
+            self.env['prestashop.product.template'].with_context(company_id=backend_record.company_id.id).with_delay(
             ).import_products(backend_record, since_date)
         return True
 
     @api.multi
     def import_carriers(self):
         for backend_record in self:
-            self.env['prestashop.delivery.carrier'].with_delay().import_batch(
+            self.env['prestashop.delivery.carrier'].with_context(company_id=backend_record.company_id.id).with_delay().import_batch(
                 backend_record,
             )
         return True
@@ -324,7 +324,7 @@ class PrestashopBackend(models.Model):
     def import_sale_orders(self):
         for backend_record in self:
             since_date = backend_record.import_orders_since
-            backend_record.env['prestashop.sale.order'].with_delay(
+            backend_record.env['prestashop.sale.order'].with_context(company_id=backend_record.company_id.id).with_delay(
             ).import_orders_since(backend_record, since_date)
         return True
 
