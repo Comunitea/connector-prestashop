@@ -248,7 +248,8 @@ class ProductInventoryAdapter(Component):
             first_key = list(res)[0]
             stock = res[first_key]
             stock['quantity'] = int(quantity['quantity'])
-            stock['out_of_stock'] = int(quantity['out_of_stock'])
+            if quantity.get('out_of_stock'):
+                stock['out_of_stock'] = int(quantity['out_of_stock'])
             client.edit(self._prestashop_model, {
                 self._export_node_name: stock
             })

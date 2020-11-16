@@ -19,8 +19,7 @@ class ProductInventoryExporter(Component):
 
     def get_quantity_vals(self, template):
         return {
-            'quantity': int(template.quantity),
-            'out_of_stock': int(template.out_of_stock),
+            'quantity': int(template.quantity)
         }
 
     def run(self, template, fields):
