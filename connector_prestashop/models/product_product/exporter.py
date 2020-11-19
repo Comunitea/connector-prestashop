@@ -16,6 +16,5 @@ class CombinationInventoryExporter(Component):
 
     def get_quantity_vals(self, product):
         return {
-            'quantity': int(product.quantity),
-            'out_of_stock': int(product.main_template_id.out_of_stock),
+            'quantity': int(product.quantity)
         }
